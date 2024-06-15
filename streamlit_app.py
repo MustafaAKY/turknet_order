@@ -72,15 +72,15 @@ with tab11:
                     "SS.3.4.İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği": malzeme6
                 })
 
-            # Create DataFrame
-            df = pd.DataFrame(processed_data)
-            st.dataframe(df)
+                # Create DataFrame
+                df = pd.DataFrame(processed_data)
+                st.dataframe(df)
 
-            # Update Google Sheets
-            updated_df = pd.concat([paket1liste, df], ignore_index=True)
-            
-            conn.update(worksheet="Sayfa1", data=updated_df)
-            st.success("İş kaydedildi.")
+                # Update Google Sheets
+                updated_df = pd.concat([paket1liste, df], ignore_index=True)
+                
+                conn.update(worksheet="Sayfa1", data=updated_df)
+                st.success("İş kaydedildi.")
 
 with tab22:
     veri = pd.DataFrame(paket1liste)
