@@ -15,7 +15,7 @@ with tab11:
 
     conn = st.connection("gsheets", type=GSheetsConnection)         
     
-    paket1liste = conn.read(spreadsheet=url,worksheet="Sayfa1" ,usecols=list(range(13)),ttl=500)
+    paket1liste = conn.read(worksheet="Sayfa1" ,usecols=list(range(13)),ttl=500)
     paket1liste = paket1liste.dropna(how="all")
 
 
@@ -104,6 +104,7 @@ with tab11:
 
             updated_df = pd.concat([paket1liste, veri_Giris], ignore_index=True)
             conn.update(worksheet="Sayfa1", data=updated_df)
+            st.success("İş Kaydedildi")
 with tab22:
     veri = pd.DataFrame(paket1liste)
     st.dataframe(veri)            
