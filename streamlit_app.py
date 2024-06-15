@@ -21,6 +21,7 @@ with tab11:
     st.title("İş Kaydetme Ekranı")
     bolge = st.selectbox("Çalıştığın Bölge", ["Gaziosmanpaşa", "Zeytinburnu"])
     malzemeler = st.multiselect("Kullandığın Malzemeleri Seç", ["MOBİLİZASYON", "Bina Sonlandırma Kutusu Kurulumu", "Bina İç Kutusu", "1/4 SPLİTTER", "1/8 SPLİTTER", "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği"], placeholder="Malzeme Seç")
+    
     with st.form(key="siparis_form"):
         data = st.text_area("İş bilgisini gir", placeholder="İş taslağını yapıştır. Sıralamanın doğru olduğundan emin ol.")
 
@@ -30,7 +31,6 @@ with tab11:
                 st.write("Bilgiler eksik")
                 st.stop()
             else:
-                processed_data = []
                 for line in data.split('\n'):
                     parts = line.split("#")
                     if len(parts) < 4:
@@ -59,7 +59,7 @@ with tab11:
                     malzeme5 = 1 if "1/8 SPLİTTER" in malzemeler else ""
                     malzeme6 = 1 if "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği" in malzemeler else ""
 
-                    processed_data.append({
+                    new_row = {
                         "NO": no,
                         "Müdahale Açıklaması": description,
                         "TARİH": tarih,
@@ -74,21 +74,19 @@ with tab11:
                         "MM.2.1.1/4 SPLİTTER": malzeme4,
                         "MM.2.3.1/8 SPLİTTER": malzeme5,
                         "SS.3.4.İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği": malzeme6
-                    })
+                    }
 
-                if processed_data:
-                    # Create DataFrame
-                    df = pd.DataFrame(processed_data)
-                    st.dataframe(df)
+                    paket1liste = paket1liste.append(new_row, ignore_index=True)
 
-                    # Update Google Sheets
-                    updated_df = pd.concat([paket1liste, df], ignore_index=True)
-                    conn.update(worksheet="Sayfa1", data=updated_df)
-                    st.success("İş kaydedildi.")
-                else:
-                    st.warning("Hiçbir veri işlenemedi.")
+                st.dataframe(paket1liste)
+
+                # Update Google Sheets
+                conn.update(worksheet="Sayfa1", data=paket1liste)
+                st.success("İş kaydedildi.")
 
 with tab22:
+    paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(13)), ttl=500)
+    paket1liste = paket1liste.dropna(how="all")
     veri = pd.DataFrame(paket1liste)
     st.dataframe(veri)
 
