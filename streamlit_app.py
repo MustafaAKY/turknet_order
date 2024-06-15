@@ -23,7 +23,7 @@ with tab11:
     bolge = st.selectbox("Çalıştığın Bölge", ["Gaziosmanpaşa", "Zeytinburnu"])
     malzemeler = st.multiselect("Kullandığın Malzemeleri Seç", ["MOBİLİZASYON", "Bina Sonlandırma Kutusu Kurulumu", "Bina İç Kutusu", "1/4 SPLİTTER", "1/8 SPLİTTER", "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği"], placeholder="Malzeme Seç")
 
-    processed_data = []
+
 
     dugme = st.button("Kaydet")
     if dugme:
@@ -55,7 +55,7 @@ with tab11:
                 malzeme5 = 1 if "1/8 SPLİTTER" in malzemeler else ""
                 malzeme6 = 1 if "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği" in malzemeler else ""
 
-                processed_data.append({
+                processed_data = ({
                     "NO": no,
                     "Müdahale Açıklaması": description,
                     "TARİH": tarih,
@@ -78,6 +78,7 @@ with tab11:
 
             # Update Google Sheets
             updated_df = pd.concat([paket1liste, df], ignore_index=True)
+            
             conn.update(worksheet="Sayfa1", data=updated_df)
             st.success("İş kaydedildi.")
 
