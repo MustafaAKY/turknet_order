@@ -55,7 +55,8 @@ with tab11:
                 malzeme5 = 1 if "1/8 SPLİTTER" in malzemeler else ""
                 malzeme6 = 1 if "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği" in malzemeler else ""
 
-                processed_data = ({
+
+                processed_data = pd.DataFrame({
                     "NO": no,
                     "Müdahale Açıklaması": description,
                     "TARİH": tarih,
@@ -72,9 +73,7 @@ with tab11:
                     "SS.3.4.İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği": malzeme6
                 })
 
-                # Create DataFrame
-                df = pd.DataFrame(processed_data)
-                st.dataframe(df)
+                df = st.dataframe(processed_data)
 
                 # Update Google Sheets
                 updated_df = pd.concat([paket1liste, df], ignore_index=True)
