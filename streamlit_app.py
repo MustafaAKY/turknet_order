@@ -18,6 +18,13 @@ paket1liste = paket1liste.dropna(how="all")
 veri = pd.DataFrame(paket1liste)
 st.dataframe(veri)
 
+tumpaketler = conn.read(spreadsheet=url,worksheet="Sayfa1" ,usecols=list(range(6)),ttl=5)
+tumpaketler = tumpaketler.dropna(how="all") 
+tumpaketler= pd.DataFrame(tumpaketler)  
+   
+st.dataframe(tumpaketler,height=2000)  
+
+
 st.title("iş kaydetme Ekranı")    
 data = st.text_area("İş bilgisini gir",placeholder="iş taslağını Yapıştır Sıralamanın Dorğu Olduğundan Emin Ol")
 bolge = st.selectbox("Çalıştığın Bölge",["Gaziosmanpaşa","Zeytinburnu"])
