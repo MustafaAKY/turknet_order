@@ -24,16 +24,19 @@ with tab11:
     with st.form(key="siparis_form"):
         data = st.text_area("İş bilgisini gir", placeholder="İş taslağını yapıştır. Sıralamanın doğru olduğundan emin ol.")
 
-
-
         dugme = st.form_submit_button("Kaydet")
         if dugme:
             if not data:
                 st.write("Bilgiler eksik")
                 st.stop()
             else:
+                processed_data = []
                 for line in data.split('\n'):
                     parts = line.split("#")
+                    if len(parts) < 4:
+                        st.write("Veri formatı hatalı: ", line)
+                        continue
+
                     no = parts[1]
                     address = parts[2]
 
@@ -44,8 +47,8 @@ with tab11:
                         mahalle = " ".join(mahalle.split()[:-2]).strip()
                         kapi_no = address.split(" NO: ")[1].strip() if "NO: " in address else ""
                     except IndexError:
-                        st.write("Adres bilgileri doğru formatta değil.")
-                        st.stop()
+                        st.write("Adres bilgileri doğru formatta değil: ", address)
+                        continue
 
                     description = parts[3]
 
@@ -56,8 +59,7 @@ with tab11:
                     malzeme5 = 1 if "1/8 SPLİTTER" in malzemeler else ""
                     malzeme6 = 1 if "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği" in malzemeler else ""
 
-
-                    processed_data = pd.DataFrame({
+                    processed_data.append({
                         "NO": no,
                         "Müdahale Açıklaması": description,
                         "TARİH": tarih,
@@ -74,26 +76,26 @@ with tab11:
                         "SS.3.4.İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği": malzeme6
                     })
 
-
-
-
-
-                    df = st.dataframe(processed_data)
+                if processed_data:
+                    # Create DataFrame
+                    df = pd.DataFrame(processed_data)
+                    st.dataframe(df)
 
                     # Update Google Sheets
                     updated_df = pd.concat([paket1liste, df], ignore_index=True)
-                    
                     conn.update(worksheet="Sayfa1", data=updated_df)
                     st.success("İş kaydedildi.")
+                else:
+                    st.warning("Hiçbir veri işlenemedi.")
 
-    with tab22:
-        veri = pd.DataFrame(paket1liste)
-        st.dataframe(veri)
+with tab22:
+    veri = pd.DataFrame(paket1liste)
+    st.dataframe(veri)
 
-    with tab33:
-        st.title("Sipariş Silme Ekranı")
-        st.text("DİKKAT: SİPARİŞLERİ YAZDIRDIĞINDAN EMİN OL")
-        if st.button("Hepsini Sil"):
-            paket1liste.drop(paket1liste.index, inplace=True)
-            conn.update(worksheet="Sayfa1", data=paket1liste)
-            st.success("Tüm veri silindi!")
+with tab33:
+    st.title("Sipariş Silme Ekranı")
+    st.text("DİKKAT: SİPARİŞLERİ YAZDIRDIĞINDAN EMİN OL")
+    if st.button("Hepsini Sil"):
+        paket1liste.drop(paket1liste.index, inplace=True)
+        conn.update(worksheet="Sayfa1", data=paket1liste)
+        st.success("Tüm veri silindi!")
