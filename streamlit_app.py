@@ -22,7 +22,7 @@ tumpaketler = conn.read(spreadsheet=url,worksheet="Sayfa1" ,usecols=list(range(6
 tumpaketler = tumpaketler.dropna(how="all") 
 tumpaketler= pd.DataFrame(tumpaketler)  
    
-st.dataframe(tumpaketler,height=2000)  
+st.dataframe(tumpaketler)  
 
 
 st.title("iş kaydetme Ekranı")    
