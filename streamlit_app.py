@@ -23,7 +23,7 @@ with tab11:
     bolge = st.selectbox("Çalıştığın Bölge", ["Gaziosmanpaşa", "Zeytinburnu"])
     malzemeler = st.multiselect("Kullandığın Malzemeleri Seç", ["MOBİLİZASYON", "Bina Sonlandırma Kutusu Kurulumu", "Bina İç Kutusu", "1/4 SPLİTTER", "1/8 SPLİTTER", "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği"], placeholder="Malzeme Seç")
 
-
+    processed_data = []
 
     dugme = st.button("Kaydet")
     if dugme:
@@ -55,8 +55,7 @@ with tab11:
                 malzeme5 = 1 if "1/8 SPLİTTER" in malzemeler else ""
                 malzeme6 = 1 if "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği" in malzemeler else ""
 
-
-                processed_data = pd.DataFrame({
+                processed_data.append({
                     "NO": no,
                     "Müdahale Açıklaması": description,
                     "TARİH": tarih,
@@ -73,13 +72,14 @@ with tab11:
                     "SS.3.4.İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği": malzeme6
                 })
 
-                df = st.dataframe(processed_data)
+            # Create DataFrame
+            df = pd.DataFrame(processed_data)
+            st.dataframe(df)
 
-                # Update Google Sheets
-                updated_df = pd.concat([paket1liste, df], ignore_index=True)
-                
-                conn.update(worksheet="Sayfa1", data=updated_df)
-                st.success("İş kaydedildi.")
+            # Update Google Sheets
+            updated_df = pd.concat([paket1liste, df], ignore_index=True)
+            conn.update(worksheet="Sayfa1", data=updated_df)
+            st.success("İş kaydedildi.")
 
 with tab22:
     veri = pd.DataFrame(paket1liste)
