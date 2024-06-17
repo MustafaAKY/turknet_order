@@ -7,7 +7,7 @@ st.set_page_config(layout="wide")
 tab11, tab22, tab33 = st.tabs(["Yeni İŞ GİR", "Yapılan İşler", "Listeyi Sil"])
 
 conn = st.connection("gsheets", type=GSheetsConnection)  
-paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(13)), ttl=5)
+paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(14)), ttl=5)
 paket1liste = paket1liste.dropna(how="all")
 
 
@@ -18,17 +18,28 @@ with tab11:
    
 
     st.title("İş Kaydetme Ekranı")
-    bolge = st.selectbox("Çalıştığın Bölge", ["Gaziosmanpaşa", "Zeytinburnu"])
+    bolge = st.selectbox("Çalıştığın Bölge", ["","Adalar", "Arnavutköy", "Ataşehir", "Avcılar", "Bağcılar", "Bahçelievler", 
+    "Bakırköy", "Başakşehir", "Bayrampaşa", "Beşiktaş", "Beykoz", "Beylikdüzü", 
+    "Beyoğlu", "Büyükçekmece", "Çatalca", "Çekmeköy", "Esenler", "Esenyurt", 
+    "Eyüpsultan", "Fatih", "Gaziosmanpaşa", "Güngören", "Kadıköy", "Kağıthane", 
+    "Kartal", "Küçükçekmece", "Maltepe", "Pendik", "Sancaktepe", "Sarıyer", 
+    "Silivri", "Sultanbeyli", "Sultangazi", "Şile", "Şişli", "Tuzla", 
+    "Ümraniye", "Üsküdar", "Zeytinburnu"
+])
     malzemeler = st.multiselect("Kullandığın Malzemeleri Seç", ["MOBİLİZASYON", "Bina Sonlandırma Kutusu Kurulumu", "Bina İç Kutusu", "1/4 SPLİTTER", "1/8 SPLİTTER", "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği"], placeholder="Malzeme Seç")
     
-    with st.form(key="siparis_form"):
+
+    with st.form(key="siparis_form",clear_on_submit=True):
         data = st.text_area("İş bilgisini gir", placeholder="İş taslağını yapıştır. Sıralamanın doğru olduğundan emin ol.")
 
         dugme = st.form_submit_button("Kaydet")
         
         if dugme:
-            if not data:
-                st.write("Bilgiler eksik")
+            if not data or bolge == "":
+                if bolge == "":
+                    st.error("Bölge Seçimi Yapın")
+                else:    
+                    st.error("Bilgiler eksik")
                 st.stop()
             else:
                 for line in data.split('\n'):
@@ -81,12 +92,14 @@ with tab11:
                     updated_df = pd.concat([paket1liste, veriler_Data],ignore_index=True)
                     conn.update(worksheet="Sayfa1", data=updated_df)
                     st.success("İş kaydedildi.")
+                    st.text(data)
+                    veriler_Data
 
 
 with tab22:
     if tab22:
 
-        paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(13)), ttl=5)
+        paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(14)), ttl=5)
         paket1liste = paket1liste.dropna(how="all")
         veri = pd.DataFrame(paket1liste)
         st.dataframe(veri)
@@ -98,3 +111,6 @@ with tab33:
         paket1liste.drop(paket1liste.index, inplace=True)
         conn.update(worksheet="Sayfa1", data=paket1liste)
         st.success("Tüm veri silindi!")
+
+
+
