@@ -6,17 +6,16 @@ from streamlit_gsheets import GSheetsConnection
 st.set_page_config(layout="wide")
 tab11, tab22, tab33 = st.tabs(["Yeni İŞ GİR", "Yapılan İşler", "Listeyi Sil"])
 
+conn = st.connection("gsheets", type=GSheetsConnection)  
+paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(13)), ttl=5)
+paket1liste = paket1liste.dropna(how="all")
+
+
 with tab11:
     # Load the data from the provided file
     tarih = datetime.now()
     tarih = tarih.strftime("%d.%m.%Y")
-
-    url = "https://docs.google.com/spreadsheets/d/1F9_pYcSh2ct_LamzK0jhIHqBJY_STvUbXPdaLdc25xs/edit?gid=0#gid="
-
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    
-    paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(13)), ttl=500)
-    paket1liste = paket1liste.dropna(how="all")
+   
 
     st.title("İş Kaydetme Ekranı")
     bolge = st.selectbox("Çalıştığın Bölge", ["Gaziosmanpaşa", "Zeytinburnu"])
@@ -26,6 +25,7 @@ with tab11:
         data = st.text_area("İş bilgisini gir", placeholder="İş taslağını yapıştır. Sıralamanın doğru olduğundan emin ol.")
 
         dugme = st.form_submit_button("Kaydet")
+        
         if dugme:
             if not data:
                 st.write("Bilgiler eksik")
@@ -59,7 +59,7 @@ with tab11:
                     malzeme5 = 1 if "1/8 SPLİTTER" in malzemeler else ""
                     malzeme6 = 1 if "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği" in malzemeler else ""
 
-                    new_row = {
+                    veriler_Data = pd.DataFrame([{
                         "NO": no,
                         "Müdahale Açıklaması": description,
                         "TARİH": tarih,
@@ -74,21 +74,22 @@ with tab11:
                         "MM.2.1.1/4 SPLİTTER": malzeme4,
                         "MM.2.3.1/8 SPLİTTER": malzeme5,
                         "SS.3.4.İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği": malzeme6
-                    }
+                    }])
 
-                    paket1liste = paket1liste.append(new_row, ignore_index=True)
 
-                st.dataframe(paket1liste)
+                    # Update Google Sheets
+                    updated_df = pd.concat([paket1liste, veriler_Data],ignore_index=True)
+                    conn.update(worksheet="Sayfa1", data=updated_df)
+                    st.success("İş kaydedildi.")
 
-                # Update Google Sheets
-                conn.update(worksheet="Sayfa1", data=paket1liste)
-                st.success("İş kaydedildi.")
 
 with tab22:
-    paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(13)), ttl=500)
-    paket1liste = paket1liste.dropna(how="all")
-    veri = pd.DataFrame(paket1liste)
-    st.dataframe(veri)
+    if tab22:
+
+        paket1liste = conn.read(worksheet="Sayfa1", usecols=list(range(13)), ttl=5)
+        paket1liste = paket1liste.dropna(how="all")
+        veri = pd.DataFrame(paket1liste)
+        st.dataframe(veri)
 
 with tab33:
     st.title("Sipariş Silme Ekranı")
