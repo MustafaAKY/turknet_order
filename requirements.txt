@@ -1,4 +1,2 @@
 streamlit
-st-gsheets-connection==0.0.4
-pandas==2.2.0
-numpy==1.26.3
+st-gsheets-connection
