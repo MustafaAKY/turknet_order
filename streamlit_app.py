@@ -26,7 +26,7 @@ with tab11:
     "Silivri", "Sultanbeyli", "Sultangazi", "Şile", "Şişli", "Tuzla", 
     "Ümraniye", "Üsküdar", "Zeytinburnu"
 ])
-    malzemeler = st.multiselect("Kullandığın Malzemeleri Seç", ["MOBİLİZASYON", "Bina Sonlandırma Kutusu Kurulumu", "Bina İç Kutusu", "1/4 SPLİTTER", "1/8 SPLİTTER", "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği"], placeholder="Malzeme Seç")
+    malzemeler = st.multiselect("Kullandığın Malzemeleri Seç", ["MOBİLİZASYON", "Bina Sonlandırma Kutusu Kurulumu", "Bina İç Kutusu", "1/4 SPLİTTER", "1/8 SPLİTTER", "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği", "Bina Splitter Kutusu (BSK) Değişimi", "Fiber Yönlendirme 1-12 Kıla kadar"], placeholder="Malzeme Seç")
     
 
     with st.form(key="siparis_form",clear_on_submit=True):
@@ -69,6 +69,8 @@ with tab11:
                     malzeme4 = 1 if "1/4 SPLİTTER" in malzemeler else ""
                     malzeme5 = 1 if "1/8 SPLİTTER" in malzemeler else ""
                     malzeme6 = 1 if "İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği" in malzemeler else ""
+                    malzeme7 = 1 if "Bina Splitter Kutusu (BSK) Değişimi" in malzemeler else ""
+                    malzeme8 = 1 if "Fiber Yönlendirme 1-12 Kıla kadar" in malzemeler else ""
 
                     veriler_Data = pd.DataFrame([{
                         "NO": no,
@@ -84,7 +86,9 @@ with tab11:
                         "MM.3.1.Bina İç Kutusu": malzeme3,
                         "MM.2.1.1/4 SPLİTTER": malzeme4,
                         "MM.2.3.1/8 SPLİTTER": malzeme5,
-                        "SS.3.4.İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği": malzeme6
+                        "SS.3.4.İlave Bina Splitter Kutusu (BSK) Kurulumu/Değişimi/Arıza-Onarım İşçiliği": malzeme6, 
+                        "Bina Splitter Kutusu (BSK) Değişimi" :malzeme7, 
+                        "Fiber Yönlendirme 1-12 Kıla kadar" :malzeme8
                     }])
 
 
